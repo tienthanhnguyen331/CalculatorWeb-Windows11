@@ -54,13 +54,13 @@ body {
 }
 
 .previous-operand {
-    font-size: 4rem;
+    font-size: 1.5rem;
     color: var(--text-color-secondary);
     min-height: 24px;
 }
 
 .current-operand {
-    font-size: 10em; /* To hơn cho giống app */
+    font-size: 2.5em; /* To hơn cho giống app */
     font-weight: 600;
     color: var(--text-color-primary);
 }
@@ -83,7 +83,7 @@ body {
     border-radius: 4px;
     padding: 10px;
     margin: 0 4px;
-    font-size: 2rem;
+    font-size: 1rem;
     font-weight: 600;
     color: var(--text-color-secondary);
     cursor: pointer;
@@ -124,7 +124,7 @@ body {
 /* Style chung cho nút trong lưới chính */
 .buttons-grid button {
     border: none;
-    font-size: 3rem;
+    font-size: 2rem;
     font-weight: 500;
     cursor: pointer;
     background-color: var(--btn-number-bg);
@@ -176,7 +176,7 @@ body {
     background: none;
     border: none;
     padding: 15px 20px;
-    font-size: 2rem;
+    font-size: 1.5rem;
     font-weight: 600;
     cursor: pointer;
     color: var(--text-color-secondary);
@@ -222,7 +222,7 @@ body {
 
 /* Style cho mỗi mục trong lịch sử */
 .history-item {
-    text-align: right; /* QUAN TRỌNG: Căn phải toàn bộ nội dung bên trong */
+    text-align: right; /*Căn phải toàn bộ nội dung bên trong */
     margin-bottom: 20px; /* Khoảng cách giữa các phép tính */
     width: 100%; /* Đảm bảo nó chiếm hết chiều rộng */
 }
@@ -235,7 +235,7 @@ body {
 
 /* Style cho dòng kết quả (15) */
 .history-result {
-    font-size: 2rem; /* To và rõ */
+    font-size: 1rem; /* To và rõ */
     font-weight: 600;
     color: var(--text-color-primary); /* Màu đen */
 }
