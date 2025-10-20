@@ -1,0 +1,241 @@
+/* --- Biến (Variables) cho dễ quản lý màu sắc --- */
+:root {
+    --bg-color: #f3f3f3;          /* Màu nền chính */
+    --btn-number-bg: #fafafa;     /* Nền nút số (trắng hơn) */
+    --btn-function-bg: #f0f0f0;  /* Nền nút chức năng (xám nhẹ) */
+    --btn-equals-bg: #0078d4;     /* Nền nút bằng (xanh accent) */
+    --btn-hover-bg: #e6e6e6;      /* Màu khi hover */
+    --text-color-primary: #000;
+    --text-color-secondary: #555;
+    --border-color: #dcdcdc;      /* Màu đường viền/chia */
+}
+
+/* --- Tổng thể --- */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0; 
+}
+
+/* --- BỐ CỤC CHÍNH (2 CỘT) --- */
+.app-layout {
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* --- CỘT 1: MÁY TÍNH --- */
+.calculator-container {
+    flex-basis: 85%;
+    height: 100%;
+}
+
+.calculator {
+    width: 100%;
+    background-color: var(--bg-color);
+    height: 100%;
+    display: flex;
+    flex-direction: column; /* Sắp xếp display, memory, grid theo chiều dọc */
+}
+
+/* --- Màn hình hiển thị --- */
+.display {
+    padding: 20px;
+    text-align: right;
+    word-wrap: break-word;
+    word-break: break-all;
+    min-height: 35vh; /* Chiều cao tối thiểu cho màn hình */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    box-sizing: border-box;
+    flex-shrink: 0; /* Không cho phép co lại */
+
+}
+
+.previous-operand {
+    font-size: 4rem;
+    color: var(--text-color-secondary);
+    min-height: 24px;
+}
+
+.current-operand {
+    font-size: 10em; /* To hơn cho giống app */
+    font-weight: 600;
+    color: var(--text-color-primary);
+}
+
+/* --- THANH ĐIỀU KHIỂN BỘ NHỚ (MỚI) --- */
+.memory-control {
+    display: grid; 
+    /* Dùng 'auto' để các nút co lại theo nội dung */
+    grid-template-columns: repeat(5, auto); 
+    gap: 2px;
+    padding: 8px 4px; 
+    flex-shrink: 0;
+
+}
+
+.memory-control button {
+
+    background: none;
+    border: none;
+    border-radius: 4px;
+    padding: 10px;
+    margin: 0 4px;
+    font-size: 2rem;
+    font-weight: 600;
+    color: var(--text-color-secondary);
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    text-align: center;
+    
+}
+
+.memory-control button:hover {
+    background-color: var(--btn-hover-bg);
+}
+
+.memory-control button:hover {
+    background-color: var(--btn-hover-bg);
+}
+
+/* Style cho nút memory khi bị vô hiệu hóa (từ lần trước) */
+.memory-control button.disabled {
+    color: #b0b0b0; 
+    cursor: not-allowed; 
+}
+
+/* Tắt hiệu ứng hover khi nút bị vô hiệu hóa (từ lần trước) */
+.memory-control button.disabled:hover {
+    background-color: transparent; 
+}
+
+/* --- Lưới nút bấm chính --- */
+.buttons-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(6, 1fr);
+    gap: 3px;
+    background-color: var(--border-color);
+    flex-grow: 1; /* Lấp đầy không gian còn lại */
+}
+
+/* Style chung cho nút trong lưới chính */
+.buttons-grid button {
+    border: none;
+    font-size: 3rem;
+    font-weight: 500;
+    cursor: pointer;
+    background-color: var(--btn-number-bg);
+    transition: background-color 0.2s ease;
+}
+
+.buttons-grid button:hover {
+    background-color: var(--btn-hover-bg);
+}
+
+/* Style riêng cho từng loại nút */
+.btn-number {
+    background-color: var(--btn-number-bg);
+    font-weight: 600;
+}
+
+.btn-function,
+.btn-operator {
+    background-color: var(--btn-function-bg);
+}
+
+.buttons-grid .btn-equals {
+    background-color: var(--btn-equals-bg);
+    color: white;
+}
+
+.buttons-grid.btn-equals:hover {
+    background-color: #005a9e;
+}
+
+/* --- CỘT 2: LỊCH SỬ & BỘ NHỚ --- */
+.history-container {
+    flex-basis: 15%;
+    height: 100%;
+    background-color: var(--bg-color);
+    border-left: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+}
+
+/* Thanh chứa 2 nút History/Memory */
+.tab-navigation {
+    display: flex;
+    flex-shrink: 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.tab-link {
+    background: none;
+    border: none;
+    padding: 15px 20px;
+    font-size: 2rem;
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--text-color-secondary);
+    border-bottom: 3px solid transparent;
+    margin-bottom: -1px;
+    flex-grow: 1;
+    text-align: center;
+}
+
+/* Style cho tab đang được chọn (active) */
+.tab-link.active {
+    color: var(--text-color-primary);
+    border-bottom-color: var(--btn-equals-bg);
+}
+
+/* Khu vực chứa nội dung */
+.tab-content-area {
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+    padding: 24px;
+    font-size: 1.5rem;
+    flex-grow: 1;
+    overflow-y: auto; /* Tự động có thanh cuộn nếu nội dung dài */
+}
+
+/* Ẩn/Hiện nội dung tab */
+.tab-content {
+    display: none;
+}
+.tab-content.active {
+    display: block;
+}
+
+/* Style cho thông báo trống */
+.empty-message {
+    color: var(--text-color-secondary);
+    text-align: center;
+    margin-top: 20px;
+}
+
+/* --- Style cho Lịch sử & Bộ nhớ --- */
+
+/* Style cho mỗi mục trong lịch sử */
+.history-item {
+    text-align: right; /* QUAN TRỌNG: Căn phải toàn bộ nội dung bên trong */
+    margin-bottom: 20px; /* Khoảng cách giữa các phép tính */
+    width: 100%; /* Đảm bảo nó chiếm hết chiều rộng */
+}
+
+/* Style cho dòng phép tính (9 + 6 =) */
+.history-expression {
+    font-size: 1.5rem; /* Nhỏ hơn một chút */
+    color: var(--text-color-secondary); /* Màu xám cho mờ đi */
+}
+
+/* Style cho dòng kết quả (15) */
+.history-result {
+    font-size: 2rem; /* To và rõ */
+    font-weight: 600;
+    color: var(--text-color-primary); /* Màu đen */
+}
