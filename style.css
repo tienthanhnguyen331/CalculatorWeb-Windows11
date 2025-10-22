@@ -54,13 +54,13 @@ body {
 }
 
 .previous-operand {
-    font-size: 1.5rem;
+    font-size: 1rem;
     color: var(--text-color-secondary);
     min-height: 24px;
 }
 
 .current-operand {
-    font-size: 2.5em; /* To hơn cho giống app */
+    font-size: 3em; /* To hơn cho giống app */
     font-weight: 600;
     color: var(--text-color-primary);
 }
