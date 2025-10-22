@@ -72,13 +72,32 @@ class Calculator {
         let computation;
         const prev = parseFloat(this.previousOperand);
         const current = parseFloat(this.currentOperand);
-
-        // Chỉ tính toán nếu có đủ 2 số và phép toán
-        if (isNaN(prev) || isNaN(current) || this.operation == null) return;
+    
+        // KỊCH BẢN 1: Người dùng chỉ nhập số rồi bấm = (ví dụ: 5 =)
+        // (Kiểm tra xem operation có rỗng KHÔNG)
+        if (this.operation == null) {
+            if (isNaN(current)) return; // Không có số, không làm gì
+            // Nếu dòng trên đã là "5 =" rồi thì không làm gì nữa
+            //if (this.previousOperand.toString().endsWith('=')) return; 
+    
+            const fullExpression = `${this.getDisplayNumber(current)} =`;
+            
+            this.addHistory(fullExpression, current); // Thêm vào lịch sử
+            
+            this.previousOperand = fullExpression; // Dòng trên sẽ là "5 ="
+            // this.currentOperand = "5" (vẫn giữ nguyên)
+            this.readyToReset = true; // Sẵn sàng cho số mới
+            this.updateDisplay(); // Cập nhật màn hình
+            return; // Xong, thoát hàm
+        }
+    
+        // KỊCH BẢN 2: Phép tính đầy đủ (ví dụ: 5 + 6 =)
+        // (Kiểm tra xem 2 số có hợp lệ KHÔNG)
+        if (isNaN(prev) || isNaN(current)) return;
         
         // Tạo chuỗi biểu thức để hiển thị
         const fullExpression = `${this.getDisplayNumber(prev)} ${this.operation} ${this.getDisplayNumber(current)} =`;
-
+    
         switch (this.operation) {
             case '+':
                 computation = prev + current;
@@ -93,9 +112,9 @@ class Calculator {
                 if (current === 0) {
                     this.currentOperand = "Cannot divide by zero";
                     this.previousOperandTextElement.innerText = ''; // Xóa dòng trên
-                    this.updateDisplay();
-                    this.readyToReset = true;
                     this.operation = undefined;
+                    this.readyToReset = true;
+                    this.updateDisplay(); // Cập nhật lỗi
                     return;
                 }
                 computation = prev / current;
@@ -103,19 +122,18 @@ class Calculator {
             default:
                 return;
         }
-
+    
         this.addHistory(fullExpression, computation); // Lưu vào lịch sử
         
-        // Cập nhật màn hình
+        // Cập nhật trạng thái
         this.currentOperand = computation;
         this.previousOperand = fullExpression; 
         this.operation = undefined;
         this.readyToReset = true;
         
-        // Cập nhật hiển thị MỘT LẦN DUY NHẤT ở cuối
-        this.previousOperandTextElement.innerText = this.previousOperand;
-        this.currentOperandTextElement.innerText = this.getDisplayNumber(this.currentOperand);
-}
+        // Cập nhật màn hình (quan trọng: bỏ các dòng cập nhật thủ công)
+        this.updateDisplay(); 
+    }
     
     // Xử lý các hàm đặc biệt (%, √, x², 1/x, ±)
     handleFunction(action) {
