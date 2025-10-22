@@ -108,7 +108,7 @@ class Calculator {
         
         // Cập nhật màn hình
         this.currentOperand = computation;
-        this.previousOperand = fullExpression; // <-- THAY ĐỔI QUAN TRỌNG
+        this.previousOperand = fullExpression; 
         this.operation = undefined;
         this.readyToReset = true;
         
@@ -122,38 +122,67 @@ class Calculator {
         const current = parseFloat(this.currentOperand);
         if (isNaN(current)) return;
         let result;
+        let fullExpression = ''; // Khởi tạo chuỗi rỗng
+
+        //Tách riêng 'negate' (±)
+        // Nút (±) chỉ thay đổi số hiện tại, không hoàn thành phép tính
+        if (action === 'negate') {
+            this.currentOperand = (current * -1).toString();
+            this.updateDisplay();
+            return; // Thoát hàm sớm
+        }
+
+        //Thêm 'fullExpression' cho tất cả các trường hợp
         switch(action) {
             case 'percentage':
+                fullExpression = `percentage(${this.getDisplayNumber(current)})`;
                 result = current / 100;
                 break;
             case 'sqrt':
                 if (current < 0) {
-                     this.currentOperand = "Invalid input";
-                     this.readyToReset = true;
-                     this.updateDisplay();
-                     return;
+                    this.currentOperand = "Invalid input";
+                    this.previousOperandTextElement.innerText = ''; // Xóa dòng trên
+                    this.readyToReset = true;
+                    this.updateDisplay();
+                    return;
                 }
+                fullExpression = `√(${this.getDisplayNumber(current)})`;
                 result = Math.sqrt(current);
                 break;
             case 'square':
+                fullExpression = `sqr(${this.getDisplayNumber(current)})`;
                 result = Math.pow(current, 2);
                 break;
             case 'reciprocal':
                 if (current === 0) {
                     this.currentOperand = "Cannot divide by zero";
+                    this.previousOperandTextElement.innerText = ''; // Xóa dòng trên
                     this.readyToReset = true;
                     this.updateDisplay();
                     return;
                 }
+                fullExpression = `1/(${this.getDisplayNumber(current)})`;
                 result = 1 / current;
                 break;
-            case 'negate':
-                result = current * -1;
-                break;
-        }
+            // 'negate' đã được xử lý ở trên
+            default:
+                return;
+        } 
+        
+        // Thêm vào lịch sử
+        this.addHistory(fullExpression, result);
+        
+        // Cập nhật màn hình
         this.currentOperand = result;
+        this.previousOperand = fullExpression; // Gán biểu thức cho dòng trên
+        this.operation = undefined;
+        this.readyToReset = true;
+        
+        // THAY ĐỔI 3: Gọi 'updateDisplay' thay vì cập nhật thủ công
         this.updateDisplay();
     }
+
+    
     
     // -- Logic Bộ nhớ --
     memoryStore() {
@@ -258,21 +287,29 @@ class Calculator {
     }
 
     // Cập nhật màn hình chính
-// Cập nhật màn hình chính
     updateDisplay() {
-        this.currentOperandTextElement.innerText = this.getDisplayNumber(this.currentOperand);
+        // Kiểm tra xem currentOperand có phải là chuỗi (báo lỗi) hay là số
+        const currentAsFloat = parseFloat(this.currentOperand);
+        if (isNaN(currentAsFloat) && typeof this.currentOperand === 'string') {
+            // Nếu là chuỗi (ví dụ: "Cannot divide by zero"), hiển thị nó
+            this.currentOperandTextElement.innerText = this.currentOperand;
+        } else {
+            // Nếu là số, định dạng nó
+            this.currentOperandTextElement.innerText = this.getDisplayNumber(this.currentOperand);
+        }
 
+        // Xử lý dòng hiển thị mờ (phép tính)
         if (this.operation != null) {
+            // 1. Khi đang gõ phép tính (ví dụ: 12 +)
             this.previousOperandTextElement.innerText = 
                 `${this.getDisplayNumber(this.previousOperand)} ${this.operation}`;
+        } else if (this.previousOperand.toString().includes('=') || 
+                this.previousOperand.toString().includes('(')) {
+            // 2. Khi vừa tính xong (ví dụ: 12 + 3 = hoặc sqrt(9))
+            this.previousOperandTextElement.innerText = this.previousOperand;
         } else {
-            // <-- THÊM KHỐI ELSE NÀY
-            // Nếu không có phép toán, xóa dòng trên đi (trừ trường hợp vừa tính xong)
-            if (this.previousOperand.toString().includes('=')) {
-                this.previousOperandTextElement.innerText = this.previousOperand;
-            } else {
-                this.previousOperandTextElement.innerText = '';
-            }
+            // 3. Khi ở trạng thái C (clear)
+            this.previousOperandTextElement.innerText = '';
         }
     }
 }
